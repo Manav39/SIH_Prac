@@ -1,15 +1,14 @@
 import { useCallback, useState } from "react";
-import { useNavigate, } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styles from "./HomePage.module.css";
-
-import { useToast } from '@chakra-ui/react'
-
-const ethers = require("ethers");
-
-import { Web3Provider } from "ethers/providers";
-
+import { useVault } from "../context/context";
+import { useToast } from "@chakra-ui/react";
+import { ethers } from "ethers";
+import Evault from "../artifacts/contracts/Evault.sol/Evault.json";
 const FitnessLandingPage = () => {
   const navigate = useNavigate();
+  const { account, setAccount, contract, setContract, provider, setProvider } =
+    useVault();
 
   const [data, setdata] = useState({
     address: "",
@@ -17,78 +16,100 @@ const FitnessLandingPage = () => {
   });
   const toast = useToast();
 
-  const getbalance = (address) => {
-  
-    // Requesting balance method
-    window.ethereum
-      .request({ 
-        method: "eth_getBalance", 
-        params: [address, "latest"] 
-      })
-      .then((balance) => {
-        // Setting balance
-        setdata({
-          Balance: ethers.formatEther(balance),
-        });
-      });
-  };
+  // const getbalance = (address) => {
+  //   // Requesting balance method
+  //   window.ethereum
+  //     .request({
+  //       method: "eth_getBalance",
+  //       params: [address, "latest"],
+  //     })
+  //     .then((balance) => {
+  //       // Setting balance
+  //       setdata({
+  //         Balance: ethers.formatEther(balance),
+  //       });
+  //     });
+  // };
 
-  const accountChangeHandler = (account) => {
-    // Setting an address data
-    setdata({
-      address: account,
-    });
-  
-    // Setting a balance
-    getbalance(account);
-    toast({
-      position: 'top',
-      title: 'Connected With Metamask Successfully',
-      status: 'success',
-      duration: 1500,
-      isClosable: true,
-    });
-    navigate("Dashboard", { state: {address: data['address'], Balance: data['Balance']}});
-  };
+  // const accountChangeHandler = (account) => {
+  //   // Setting an address data
+  //   setdata({
+  //     address: account,
+  //   });
 
+  //   // Setting a balance
+  //   getbalance(account);
+  //   toast({
+  //     position: "top",
+  //     title: "Connected With Metamask Successfully",
+  //     status: "success",
+  //     duration: 1500,
+  //     isClosable: true,
+  //   });
+  //   navigate("Dashboard", {
+  //     state: { address: data["address"], Balance: data["Balance"] },
+  //   });
+  // };
 
-  const requestMetaMaskAccess = () => {
+  const requestMetaMaskAccess = async () => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
     try {
-      if (window.ethereum) {
-        window.ethereum
-        .request({ method: "eth_requestAccounts" })
-        .then((res) => accountChangeHandler(res[0]))
-        .catch((err) => {
-          console.log(err)
-          toast({
-            position: 'top',
-            title: 'Error While Connecting With Metamask',
-            status: 'error',
-            duration: 1500,
-            isClosable: true,
-          })
+      if (provider) {
+        // window.ethereum
+        //   .request({ method: "eth_requestAccounts" })
+        //   .then((res) => accountChangeHandler(res[0]))
+        //   .catch((err) => {
+        //     console.log(err);
+        //     toast({
+        //       position: "top",
+        //       title: "Error While Connecting With Metamask",
+        //       status: "error",
+        //       duration: 1500,
+        //       isClosable: true,
+        //     });
+        //   });
+        await provider.send("eth_requestAccounts", []);
+
+        window.ethereum.on("chainChanged", () => {
+          window.location.reload();
         });
+
+        window.ethereum.on("accountsChanged", () => {
+          window.location.reload();
+        });
+
+        const signer = provider.getSigner();
+        const address = await signer.getAddress();
+        setAccount(address);
+        const contractAddress = "0xeC88Eb8558C32295b46112aa839771dBC8ef4C02";
+        const contract = new ethers.Contract(
+          contractAddress,
+          Evault.abi,
+          signer
+        );
+        setContract(contract);
+        setProvider(signer);
+        navigate("Dashboard");
       } else {
         toast({
-          position: 'top',
-          title: 'Install Metamask Extension',
-          status: 'warning',
+          position: "top",
+          title: "Install Metamask Extension",
+          status: "warning",
           duration: 1500,
           isClosable: true,
-        })
+        });
       }
-    }
-    catch(error) {
+    } catch (error) {
       toast({
-        position: 'top',
-        title: 'Error While Connecting With Metamask',
-        status: 'error',
+        position: "top",
+        title: "Error While Connecting With Metamask",
+        status: "error",
         duration: 1500,
         isClosable: true,
-      })
+      });
     }
-  }
-  
+  };
+
   const onLogoClick = useCallback(() => {
     navigate("/");
   }, [navigate]);
@@ -160,13 +181,17 @@ const FitnessLandingPage = () => {
               <p className={styles.cardio}>Storage</p>
             </div>
             <div className={styles.subtitle}>
-              Our E-vault provides decentralized storage of documents such that it will be accessible to all the users 
+              Our E-vault provides decentralized storage of documents such that
+              it will be accessible to all the users
             </div>
             <div className={styles.buttonrow}>
               <button className={styles.button} onClick={requestMetaMaskAccess}>
                 <div className={styles.getStarted}>Get Started</div>
               </button>
-              <button className={styles.button1} onClick={requestMetaMaskAccess}>
+              <button
+                className={styles.button1}
+                onClick={requestMetaMaskAccess}
+              >
                 <div className={styles.getStarted}>Preview</div>
               </button>
             </div>
@@ -184,10 +209,8 @@ const FitnessLandingPage = () => {
           </div>
 
           <div className={styles.exercisecards}>
-
             <div className={styles.column1}>
               <div className={styles.exercisecard}>
-                
                 <img
                   className={styles.cardimageIcon}
                   alt=""
@@ -195,40 +218,36 @@ const FitnessLandingPage = () => {
                 />
                 <div className={styles.text}>
                   <div className={styles.titles}>
-                    <div className={styles.popularExercises}>Blockchain-Based Security</div>
+                    <div className={styles.popularExercises}>
+                      Blockchain-Based Security
+                    </div>
                   </div>
-                  
                 </div>
               </div>
               <div className={styles.exercisecard}>
-
                 <img className={styles.imageIcon} alt="" src="/interface.jpg" />
                 <div className={styles.text}>
                   <div className={styles.titles}>
-                    <div className={styles.popularExercises}>User-Friendly Interfaces</div>
+                    <div className={styles.popularExercises}>
+                      User-Friendly Interfaces
+                    </div>
                   </div>
-                  
                 </div>
               </div>
             </div>
 
             <div className={styles.column1}>
               <div className={styles.exercisecard2}>
-
-                <img
-                  className={styles.imageIcon}
-                  alt=""
-                  src="/privacy.jpg"
-                />
+                <img className={styles.imageIcon} alt="" src="/privacy.jpg" />
                 <div className={styles.text}>
                   <div className={styles.titles}>
-                    <div className={styles.popularExercises}>Privacy and Confidentiality</div>
+                    <div className={styles.popularExercises}>
+                      Privacy and Confidentiality
+                    </div>
                   </div>
-                  
                 </div>
               </div>
               <div className={styles.exercisecard}>
-
                 <img
                   className={styles.imageIcon}
                   alt=""
@@ -236,33 +255,29 @@ const FitnessLandingPage = () => {
                 />
                 <div className={styles.text}>
                   <div className={styles.titles}>
-                    <div className={styles.popularExercises}>Integration Capabilities</div>
+                    <div className={styles.popularExercises}>
+                      Integration Capabilities
+                    </div>
                     {/* <div
                       className={styles.subtitles}
                     >{`Feature 5 Description`}</div> */}
                   </div>
-                  
                 </div>
               </div>
             </div>
 
             <div className={styles.column1}>
               <div className={styles.exercisecard2}>
-
-                <img
-                  className={styles.imageIcon}
-                  alt=""
-                  src="/scalable.jpg"
-                />
+                <img className={styles.imageIcon} alt="" src="/scalable.jpg" />
                 <div className={styles.text}>
                   <div className={styles.titles}>
-                    <div className={styles.popularExercises}>Scalability and Adaptability</div>
+                    <div className={styles.popularExercises}>
+                      Scalability and Adaptability
+                    </div>
                   </div>
-                  
                 </div>
               </div>
               <div className={styles.exercisecard}>
-
                 <img
                   className={styles.imageIcon}
                   alt=""
@@ -272,11 +287,9 @@ const FitnessLandingPage = () => {
                   <div className={styles.titles}>
                     <div className={styles.popularExercises}>Transparency</div>
                   </div>
-                  
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </div>
@@ -295,10 +308,13 @@ const FitnessLandingPage = () => {
             </div>
             <div className={styles.description}>
               <div className={styles.loremIpsumDolor}>
-                Our E-vault will help you in storing documents varying across number of cases in a secure and 
-                organized way.
+                Our E-vault will help you in storing documents varying across
+                number of cases in a secure and organized way.
               </div>
-              <button className={styles.button2} onClick={requestMetaMaskAccess}>
+              <button
+                className={styles.button2}
+                onClick={requestMetaMaskAccess}
+              >
                 <div className={styles.getStarted1}>Get Started</div>
               </button>
             </div>
@@ -306,60 +322,32 @@ const FitnessLandingPage = () => {
         </div>
         <div className={styles.trainersimages}>
           <div className={styles.desktop}>
-
             <div className={styles.trainer3}>
-              <img
-                className={styles.trainer3Child}
-                alt=""
-                src="/client.jpg"
-              />
+              <img className={styles.trainer3Child} alt="" src="/client.jpg" />
               <div className={styles.samanthaWilliam}>Client</div>
             </div>
             <div className={styles.trainer2}>
-              <img
-                className={styles.trainer3Child}
-                alt=""
-                src="/lawyer.jpg"
-              />
+              <img className={styles.trainer3Child} alt="" src="/lawyer.jpg" />
               <div className={styles.samanthaWilliam}>Lawyer</div>
             </div>
             <div className={styles.trainer11}>
-              <img
-                className={styles.trainer1Child}
-                alt=""
-                src="/judge.jpg"
-              />
+              <img className={styles.trainer1Child} alt="" src="/judge.jpg" />
               <div className={styles.jonathanWise}>Judge</div>
             </div>
-
           </div>
           <div className={styles.tablet}>
-
             <div className={styles.trainer31}>
-              <img
-                className={styles.trainer3Item}
-                alt=""
-                src="/judge.jpg"
-              />
+              <img className={styles.trainer3Item} alt="" src="/judge.jpg" />
               <div className={styles.karenSummer1}>Judge</div>
             </div>
             <div className={styles.trainer21}>
-              <img
-                className={styles.trainer2Item}
-                alt=""
-                src="/lawyer.jpg"
-              />
+              <img className={styles.trainer2Item} alt="" src="/lawyer.jpg" />
               <div className={styles.jonathanWise1}>Lawyer</div>
             </div>
             <div className={styles.trainer12}>
-              <img
-                className={styles.trainer1Item}
-                alt=""
-                src="/client.jpg"
-              />
+              <img className={styles.trainer1Item} alt="" src="/client.jpg" />
               <div className={styles.samanthaWilliam1}>Client</div>
             </div>
-
           </div>
         </div>
       </div>
