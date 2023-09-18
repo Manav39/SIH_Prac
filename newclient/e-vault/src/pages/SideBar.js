@@ -1,7 +1,7 @@
-import { Heading } from '@chakra-ui/react';
+import { Heading, useToast } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import styles from "./HomePage.module.css";
-import { useLocation } from 'react-router-dom';
+import { useLocation, Route, Routes, useNavigate, Navigate } from 'react-router-dom';
 
 import {
   IconButton,
@@ -36,6 +36,8 @@ import {
   FiChevronDown,
 } from 'react-icons/fi'
 import { IconType } from 'react-icons'
+import Cases from './Cases';
+import Dashboard from './Dashboard';
 
 // LinkItemProps
 const LinkItemProps = {
@@ -61,13 +63,9 @@ const SidebarProps = {
 
 const LinkItems: Array<LinkItemProps> = [
   { name: 'Dashboard', icon: FiHome },
-  { name: 'Documents', icon: FiStar },
+  { name: 'Cases', icon: FiStar },
   { name: 'Profile', icon: FiSettings },
 ]
-
-const signOutOfMetamask = () => {
-
-}
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   return (
@@ -99,7 +97,7 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
   return (
     <Box
       as="a"
-      href="#"
+      href={children}
       style={{ textDecoration: 'none' }}
       _focus={{ boxShadow: 'none' }}>
       <Flex
@@ -131,6 +129,22 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
 }
 
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
+
+  const navigate = useNavigate();
+  const toast = useToast();
+
+  const signOutOfMetamask = () => {
+    navigate("/");
+
+    toast({
+      position: 'top',
+      title: 'Logged Out Successfully',
+      status: 'success',
+      duration: 1500,
+      isClosable: true,
+    });
+  }
+
   return (
     <Flex
       ml={{ base: 0, md: 60 }}
@@ -197,7 +211,9 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   )
 }
 
-const SideBar = () => {
+const SideBar = (props) => {
+
+  const navigate = useNavigate();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const location = useLocation();
@@ -209,12 +225,10 @@ const SideBar = () => {
       setAddress(location.state.address);
       setBalance(location.state.Balance);
     }
-    // console.log(address);
     // console.log(balance);
   }, [])
 
   return (
-    // <div className={styles.fitnesslandingpage}>
 
       <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
         <SidebarContent onClose={() => onClose} display={{ base: 'none', md: 'block' }} />
@@ -232,7 +246,9 @@ const SideBar = () => {
         {/* mobilenav */}
         <MobileNav onOpen={onOpen} />
         <Box ml={{ base: 0, md: 60 }} p="4">
-          {/* Content */}
+
+          {props.children}
+
         </Box>
       </Box>
 

@@ -43,12 +43,12 @@ const FitnessLandingPage = () => {
     getbalance(account);
     toast({
       position: 'top',
-      title: 'Connected With Metamask Successfully.',
+      title: 'Connected With Metamask Successfully',
       status: 'success',
-      duration: 2000,
+      duration: 1500,
       isClosable: true,
     });
-    navigate("dashboard", { state: {address: data['address'], Balance: data['Balance']}});
+    navigate("Dashboard", { state: {address: data['address'], Balance: data['Balance']}});
   };
 
 
@@ -62,18 +62,18 @@ const FitnessLandingPage = () => {
           console.log(err)
           toast({
             position: 'top',
-            title: 'Error While Connecting With Metamask.',
+            title: 'Error While Connecting With Metamask',
             status: 'error',
-            duration: 2000,
+            duration: 1500,
             isClosable: true,
           })
         });
       } else {
         toast({
           position: 'top',
-          title: 'Install Metamask Extension.',
+          title: 'Install Metamask Extension',
           status: 'warning',
-          duration: 2000,
+          duration: 1500,
           isClosable: true,
         })
       }
@@ -81,9 +81,9 @@ const FitnessLandingPage = () => {
     catch(error) {
       toast({
         position: 'top',
-        title: 'Error While Connecting With Metamask.',
+        title: 'Error While Connecting With Metamask',
         status: 'error',
-        duration: 2000,
+        duration: 1500,
         isClosable: true,
       })
     }
@@ -110,15 +110,7 @@ const FitnessLandingPage = () => {
   }, []);
 
   const onPricingClick = useCallback(() => {
-    navigate("/page-2");
-  }, [navigate]);
-
-  const onLoginClick = useCallback(() => {
-    navigate("/page-2");
-  }, [navigate]);
-
-  const onButtonClick = useCallback(() => {
-    navigate("/page-2");
+    navigate("/");
   }, [navigate]);
 
   const onButton1Click = useCallback(() => {
