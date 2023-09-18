@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 contract Evault {
-    address public admin = 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4;
+    address public admin = 0x46A2A666fc06681e2cB49440a0776a6C4Cc21906;
 
     struct Judge {
         address judgeAddress;
