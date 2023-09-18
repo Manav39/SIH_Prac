@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 contract Evault {
-    address public admin = 0x46A2A666fc06681e2cB49440a0776a6C4Cc21906;
+    address public admin = 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4;
 
     struct Judge {
         address judgeAddress;
@@ -327,5 +327,17 @@ contract Evault {
             }
         }
         return false;
+    }
+
+    function getJudgeList() public view returns (Judge[] memory) {
+        return judgeList;
+    }
+
+    function getClientList() public view returns (Client[] memory) {
+        return clientList;
+    }
+
+    function getLawyerList() public view returns (Lawyer[] memory) {
+        return lawyerList;
     }
 }

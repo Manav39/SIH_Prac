@@ -81,7 +81,7 @@ const FitnessLandingPage = () => {
         const signer = provider.getSigner();
         const address = await signer.getAddress();
         setAccount(address);
-        const contractAddress = "0xeC88Eb8558C32295b46112aa839771dBC8ef4C02";
+        const contractAddress = "0xdEc173A9E8D524d7b4975dd4ADa40dBF9ddf41E7";
         const contract = new ethers.Contract(
           contractAddress,
           Evault.abi,
