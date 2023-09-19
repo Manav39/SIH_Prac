@@ -16,13 +16,14 @@ import Judges from "./pages/Judges";
 import Lawyers from "./pages/Lawyers";
 import Clients from "./pages/Clients";
 import ViewCase from "./components/ViewCase";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
     <ChakraProvider>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        
+
         <Route
           path="/Dashboard"
           element={
@@ -86,6 +87,14 @@ function App() {
                 <ViewCase />
               </SideBar>
             </>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <SideBar>
+              <Profile />
+            </SideBar>
           }
         />
       </Routes>
