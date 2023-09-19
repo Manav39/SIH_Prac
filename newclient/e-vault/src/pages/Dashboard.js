@@ -16,8 +16,8 @@ import {
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
-const Dashboard = () => {
-  const { account, contract } = useVault();
+const Dashboard = (props) => {
+  const { account, contract, userType } = useVault();
   const navigate = useNavigate();
   const [numberOfCases, setNumberOfCases] = useState(0);
   const [numberOfDocuments, setNumberOfDocuments] = useState(0);
@@ -25,10 +25,19 @@ const Dashboard = () => {
   const goToCases = () => {
     navigate("/Cases");
   };
+
   useEffect(() => {
     console.log("Account : ", account);
     console.log("Contract : ", contract);
+    console.log("User Type : ", userType);
+
+    const getDetails = async() => {
+      setNumberOfCases(parseInt(await contract.caseIdCounter()))
+    }
+    getDetails();
+
   }, []);
+  
   return (
     <HStack align={"center"} justify={"center"}>
       <Card maxW="sm" align="center">
@@ -42,7 +51,7 @@ const Dashboard = () => {
             <Heading size="md">Number of Cases </Heading>
 
             <Text color="blue.600" fontSize="2xl">
-              {numberOfCases}
+              {numberOfCases - 1}
             </Text>
           </Stack>
         </CardBody>

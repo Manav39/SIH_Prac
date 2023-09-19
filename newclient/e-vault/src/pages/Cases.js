@@ -1,17 +1,40 @@
 import React from 'react';
-import { Tabs, Tab, TabList, TabPanel, TabPanels } from '@chakra-ui/react';
+import { Tabs, Tab, TabList, TabPanel, TabPanels, Heading } from '@chakra-ui/react';
 import Case from '../components/Case';
 import AddNewCase from '../components/AddNewCase';
 
+import { useState, useEffect } from 'react';
+import { useVault } from '../context/context';
+
 const Cases = () => {
 
-    const cases = [
-        {id: 0, title: "Case 1 Title", description: "Case 1 Description"},
-        {id: 1, title: "Case 2 Title", description: "Case 2 Description"},
-        {id: 2, title: "Case 3 Title", description: "Case 3 Description"},
-        {id: 3, title: "Case 4 Title", description: "Case 4 Description"},
-        {id: 4, title: "Case 5 Title", description: "Case 5 Description"}
-    ]
+    const [activeTab, setActiveTab] = useState(0);
+    const [casesList, setCasesList] = useState([]);
+    const { account, contract, caseCount } = useVault();
+
+    useEffect(() => {
+        const display = async() => {
+           try {
+                const cl = await contract.getAllCaseIdsAndNames();
+                let copyData = []
+                let count = parseInt(await contract.caseIdCounter())
+                for(let i=0; i<count-1; i++) {
+                    const name = cl[1][i]
+                    const desc = cl[2][i]
+                    copyData.push({id: i, Name: name, Desc: desc})
+                    setCasesList(copyData)
+                }
+           }
+           catch(err) {
+                console.log(err);
+           }
+        }
+        display();
+    }, []);
+
+    const changeTab = () => {
+        setActiveTab(activeTab===0 ? 1 : 0)
+    }
 
     return (
         <Tabs variant='soft-rounded' isFitted colorScheme='cyan'>
@@ -21,14 +44,14 @@ const Cases = () => {
         </TabList>
         <TabPanels>
             <TabPanel>
-                {cases && cases.map((c) => (
+                {casesList && casesList.map((c) => (
                     <Case key={c.id}  props={c} />  
                 ))}
             </TabPanel>
 
 
             <TabPanel>
-                <AddNewCase />
+                <AddNewCase onSuccess={changeTab}/>
             </TabPanel>
         </TabPanels>
         </Tabs>

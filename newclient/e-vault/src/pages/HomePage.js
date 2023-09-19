@@ -5,9 +5,10 @@ import { useVault } from "../context/context";
 import { useToast } from "@chakra-ui/react";
 import { ethers } from "ethers";
 import Evault from "../artifacts/contracts/Evault.sol/Evault.json";
-const FitnessLandingPage = () => {
+
+const HomePage = () => {
   const navigate = useNavigate();
-  const { account, setAccount, contract, setContract, provider, setProvider } =
+  const { account, setAccount, contract, setContract, provider, setProvider, userType, setUserType } =
     useVault();
 
   const [data, setdata] = useState({
@@ -39,13 +40,13 @@ const FitnessLandingPage = () => {
 
   //   // Setting a balance
   //   getbalance(account);
-  //   toast({
-  //     position: "top",
-  //     title: "Connected With Metamask Successfully",
-  //     status: "success",
-  //     duration: 1500,
-  //     isClosable: true,
-  //   });
+    // toast({
+    //   position: "top",
+    //   title: "Connected With Metamask Successfully",
+    //   status: "success",
+    //   duration: 1500,
+    //   isClosable: true,
+    // });
   //   navigate("Dashboard", {
   //     state: { address: data["address"], Balance: data["Balance"] },
   //   });
@@ -78,10 +79,18 @@ const FitnessLandingPage = () => {
           window.location.reload();
         });
 
+        toast({
+          position: "top",
+          title: "Connected With Metamask Successfully",
+          status: "success",
+          duration: 1500,
+          isClosable: true,
+        });
+
         const signer = provider.getSigner();
         const address = await signer.getAddress();
         setAccount(address);
-        const contractAddress = "0xeC88Eb8558C32295b46112aa839771dBC8ef4C02";
+        const contractAddress = "0x2B03BFC7C9eF19936Aba4EcF78e908084fC24241";
         const contract = new ethers.Contract(
           contractAddress,
           Evault.abi,
@@ -89,7 +98,23 @@ const FitnessLandingPage = () => {
         );
         setContract(contract);
         setProvider(signer);
-        navigate("Dashboard");
+        if(address === '0x46A2A666fc06681e2cB49440a0776a6C4Cc21906') {
+          setUserType("Admin");
+          navigate("Dashboard");
+        }
+        else {
+          if(await contract.isJudge(address)) {
+            setUserType('Judge')
+          }
+          else if(await contract.isClient(address)) {
+            setUserType('Client')
+          }
+          else if(await contract.isLawyer(address)) {
+            setUserType('Lawyer')
+          }
+          console.log("userType: ", userType)
+          navigate("Dashboard");
+        }
       } else {
         toast({
           position: "top",
@@ -143,13 +168,9 @@ const FitnessLandingPage = () => {
     }
   }, []);
 
-  const onButton2Click = useCallback(() => {
-    navigate("/page-2");
-  }, [navigate]);
+  const subscribeToEmail = () => {
 
-  const onButton3Click = useCallback(() => {
-    navigate("/page-2");
-  }, [navigate]);
+  }
 
   return (
     <div className={styles.fitnesslandingpage}>
@@ -413,7 +434,7 @@ const FitnessLandingPage = () => {
               className={styles.button3}
               type="submit"
               form="formID"
-              onClick={onButton3Click}
+              onClick={subscribeToEmail}
             >
               <div className={styles.getStarted1}>Subscribe</div>
             </button>
@@ -424,4 +445,4 @@ const FitnessLandingPage = () => {
   );
 };
 
-export default FitnessLandingPage;
+export default HomePage;

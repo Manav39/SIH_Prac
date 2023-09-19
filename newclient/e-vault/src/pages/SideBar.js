@@ -1,7 +1,8 @@
 import { Heading, useToast } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import styles from "./HomePage.module.css";
-import { useLocation, Route, Routes, useNavigate, Navigate } from 'react-router-dom';
+import { useLocation, Route, Routes, useNavigate, Navigate, Link } from 'react-router-dom';
+import { useVault } from '../context/context';
 
 import {
   IconButton,
@@ -39,11 +40,11 @@ import { IconType } from 'react-icons'
 import Cases from './Cases';
 import Dashboard from './Dashboard';
 
-// LinkItemProps
-const LinkItemProps = {
-  name: 'string',
-  icon: 'IconType', 
-};
+// // LinkItemProps
+// const LinkItemProps = {
+//   name: 'string',
+//   icon: 'IconType', 
+// };
 
 // NavItemProps
 const NavItemProps = {
@@ -61,13 +62,97 @@ const SidebarProps = {
   onClose: () => {}, 
 };
 
-const LinkItems: Array<LinkItemProps> = [
-  { name: 'Dashboard', icon: FiHome },
-  { name: 'Cases', icon: FiStar },
-  { name: 'Profile', icon: FiSettings },
-]
+
+
+// let LinkItems: Array<LinkItemProps> = [] 
+
+// if(userType === 'Admin') {
+//   LinkItems = [
+//     { name: 'Dashboard', icon: FiHome },
+//     { name: 'Cases', icon: FiStar },
+//     { name: 'Judge', icon: FiStar },
+//     { name: 'Lawyer', icon: FiStar },
+//     { name: 'Client', icon: FiStar },
+//     { name: 'Profile', icon: FiSettings },
+//   ]
+// }
+// else if(userType === 'Judge') {
+//   LinkItems = [
+//     { name: 'Dashboard', icon: FiHome },
+//     { name: 'Cases', icon: FiStar },
+//     { name: 'Profile', icon: FiSettings },
+//   ]
+// }
+// else if(userType === 'Lawyer') {
+//   LinkItems = [
+//     { name: 'Dashboard', icon: FiHome },
+//     { name: 'Cases', icon: FiStar },
+//     { name: 'Profile', icon: FiSettings },
+//   ]
+// }
+// else if(userType === 'Client') {
+//   LinkItems = [
+//     { name: 'Dashboard', icon: FiHome },
+//     { name: 'Cases', icon: FiStar },
+//     { name: 'Profile', icon: FiSettings },
+//   ]
+// }
+
+
+// original
+// const LinkItems: Array<LinkItemProps> = [
+//   { name: 'Dashboard', icon: FiHome },
+//   { name: 'Cases', icon: FiStar },
+//   { name: 'Judge', icon: FiStar },
+//   { name: 'Lawyer', icon: FiStar },
+//   { name: 'Client', icon: FiStar },
+//   { name: 'Profile', icon: FiSettings },
+// ]
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
+
+  const { userType } = useVault();
+
+  // LinkItemProps
+  const LinkItemProps = {
+    name: 'string',
+    icon: 'IconType', 
+  };
+
+  let LinkItems: Array<LinkItemProps> = [] 
+
+  if(userType === 'Admin') {
+    LinkItems = [
+      { name: 'Dashboard', icon: FiHome },
+      { name: 'Cases', icon: FiStar },
+      { name: 'Judge', icon: FiStar },
+      { name: 'Lawyer', icon: FiStar },
+      { name: 'Client', icon: FiStar },
+      { name: 'Profile', icon: FiSettings },
+    ]
+  }
+  else if(userType === 'Judge') {
+    LinkItems = [
+      { name: 'Dashboard', icon: FiHome },
+      { name: 'Cases', icon: FiStar },
+      { name: 'Profile', icon: FiSettings },
+    ]
+  }
+  else if(userType === 'Lawyer') {
+    LinkItems = [
+      { name: 'Dashboard', icon: FiHome },
+      { name: 'Cases', icon: FiStar },
+      { name: 'Profile', icon: FiSettings },
+    ]
+  }
+  else if(userType === 'Client') {
+    LinkItems = [
+      { name: 'Dashboard', icon: FiHome },
+      { name: 'Cases', icon: FiStar },
+      { name: 'Profile', icon: FiSettings },
+    ]
+  }
+
   return (
     <Box
       transition="3s ease"
@@ -95,9 +180,11 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
 
 const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
   return (
+
+    <Link to={`/${children}`}>
+    
     <Box
       as="a"
-      href={children}
       style={{ textDecoration: 'none' }}
       _focus={{ boxShadow: 'none' }}>
       <Flex
@@ -125,10 +212,15 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
         {children}
       </Flex>
     </Box>
+
+    </Link>
+
   )
 }
 
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
+
+  const { userType } = useVault();
 
   const navigate = useNavigate();
   const toast = useToast();
@@ -191,7 +283,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
                   ml="2">
                   <Text fontSize="sm">You</Text>
                   <Text fontSize="xs" color="gray.600">
-                    Admin
+                    { userType }
                   </Text>
                 </VStack>
                 <Box display={{ base: 'none', md: 'flex' }}>
