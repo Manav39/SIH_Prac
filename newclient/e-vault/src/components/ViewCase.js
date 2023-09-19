@@ -255,7 +255,7 @@ const ViewCase = ({ onSuccess }) => {
                             <Divider />
 
                             {
-                                userType !== "Admin" && userType !== "Client" && (
+                                (userType === "Judge" || userType === "Lawyer") && (
 
                                     <>
 
