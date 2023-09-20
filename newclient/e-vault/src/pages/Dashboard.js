@@ -96,7 +96,7 @@ const Dashboard = (props) => {
                 <Heading size="md">Number of Cases </Heading>
 
                 <Text color="blue.600" fontSize="2xl">
-                  {numberOfCases}
+                  {userType === "Admin" ? numberOfCases+1 : numberOfCases}
                 </Text>
               </Stack>
             </CardBody>
