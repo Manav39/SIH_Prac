@@ -18,6 +18,7 @@ const Profile = () => {
   const [details, setDetails] = useState([]);
   const [caseCount, setCaseCount] = useState(0);
   const { userType, contract, account } = useVault();
+  const adminAddress = "0x46A2A666fc06681e2cB49440a0776a6C4Cc21906"
   useEffect(() => {
     const display = async () => {
       if (userType === "Judge") {
@@ -65,9 +66,13 @@ const Profile = () => {
             />
             <Stack mt="6" spacing="3" align="center">
               <Heading size="md">User Type : {userType}</Heading>
-              <Heading size="md">Name : {details[1]}</Heading>
-              <Heading size="md">Address : {trimAddress(details[0])}</Heading>
-              <Heading size="md">Number of Active Cases : {caseCount}</Heading>
+              <Heading size="md">Name : {userType === "Admin" ? "Admin" : details[1]}</Heading>
+              <Heading size="md">Address : {userType === "Admin" ? trimAddress(adminAddress) : trimAddress(details[0])}</Heading>
+              {
+                userType !== "Admin" && (
+                  <Heading size="md">Number of Active Cases : {caseCount}</Heading>
+                )
+              }
             </Stack>
           </CardBody>
           <Divider />
