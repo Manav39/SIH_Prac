@@ -8,8 +8,16 @@ import Evault from "../artifacts/contracts/Evault.sol/Evault.json";
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const { account, setAccount, contract, setContract, provider, setProvider, userType, setUserType } =
-    useVault();
+  const {
+    account,
+    setAccount,
+    contract,
+    setContract,
+    provider,
+    setProvider,
+    userType,
+    setUserType,
+  } = useVault();
 
   const [data, setdata] = useState({
     address: "",
@@ -40,13 +48,13 @@ const HomePage = () => {
 
   //   // Setting a balance
   //   getbalance(account);
-    // toast({
-    //   position: "top",
-    //   title: "Connected With Metamask Successfully",
-    //   status: "success",
-    //   duration: 1500,
-    //   isClosable: true,
-    // });
+  // toast({
+  //   position: "top",
+  //   title: "Connected With Metamask Successfully",
+  //   status: "success",
+  //   duration: 1500,
+  //   isClosable: true,
+  // });
   //   navigate("Dashboard", {
   //     state: { address: data["address"], Balance: data["Balance"] },
   //   });
@@ -98,21 +106,18 @@ const HomePage = () => {
         );
         setContract(contract);
         setProvider(signer);
-        if(address === '0x46A2A666fc06681e2cB49440a0776a6C4Cc21906') {
+        if (address === "0x46A2A666fc06681e2cB49440a0776a6C4Cc21906") {
           setUserType("Admin");
           navigate("Dashboard");
-        }
-        else {
-          if(await contract.isJudge(address)) {
-            setUserType('Judge')
+        } else {
+          if (await contract.isJudge(address)) {
+            setUserType("Judge");
+          } else if (await contract.isClient(address)) {
+            setUserType("Client");
+          } else if (await contract.isLawyer(address)) {
+            setUserType("Lawyer");
           }
-          else if(await contract.isClient(address)) {
-            setUserType('Client')
-          }
-          else if(await contract.isLawyer(address)) {
-            setUserType('Lawyer')
-          }
-          console.log("userType: ", userType)
+          console.log("userType: ", userType);
           navigate("Dashboard");
         }
       } else {
@@ -168,9 +173,7 @@ const HomePage = () => {
     }
   }, []);
 
-  const subscribeToEmail = () => {
-
-  }
+  const subscribeToEmail = () => {};
 
   return (
     <div className={styles.fitnesslandingpage}>

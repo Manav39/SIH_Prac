@@ -91,8 +91,9 @@ const ViewCase = ({ onSuccess }) => {
           url: "https://api.pinata.cloud/pinning/pinFileToIPFS",
           data: formData,
           headers: {
-            pinata_api_key: process.env.PINATA_KEY,
-            pinata_secret_api_key: PINATA_SECRET_KEY,
+            pinata_api_key: "e8b143c571986d7b7074",
+            pinata_secret_api_key:
+              "c60fe4549b60ae8f8dae9402ca841df7307d7947fbb90363cd7250b16d4cff8d",
             "Content-Type": "multipart/form-data",
           },
         });
