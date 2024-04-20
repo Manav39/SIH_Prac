@@ -281,12 +281,13 @@ const ViewCase = ({ onSuccess }) => {
         </TabPanel>
 
         <TabPanel>
-          <Flex
-            minH={"100vh"}
-            align={"center"}
-            justify={"center"}
-            bg={useColorModeValue("gray.50", "gray.800")}
-          >
+           <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: "0.5rem",
+        }}
+      >
             {documentHashesList.length === 0 && (
               <Box
                 border="2px solid cyan"
@@ -385,7 +386,7 @@ const ViewCase = ({ onSuccess }) => {
                   </Box>
                 </Center>
               ))}
-          </Flex>
+          </div>
         </TabPanel>
       </TabPanels>
     </Tabs>
